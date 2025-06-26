@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CallConnect Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="/js/chat.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/favicon_io/favicon.ico" type="image/x-icon" />
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white min-h-screen flex items-center justify-center"
+  >
+    <div
+      class="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl overflow-hidden"
+    >
+      <!-- Header -->
+      <div class="bg-blue-700 px-6 py-4 flex items-center justify-between">
+        <div class="text-xl font-semibold">
+          <i class="bi bi-chat-left-dots-fill mr-2"></i>Chat
+        </div>
+        <div class="flex gap-6 items-center">
+          <i
+            id="delete-chathistory-btn"
+            title="Delete Chat History"
+            class="bi bi-trash-fill text-danger fs-5 hover:cursor-pointer"
+          ></i>
+          <a
+            id="backBtn"
+            href="#"
+            class="text-sm text-white/70 hover:text-white underline"
+          >
+            ← Back
+          </a>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div
+        id="chat-box"
+        class="h-96 overflow-y-auto px-4 py-3 space-y-3 bg-gray-900 text-sm"
+      >
+        <!-- Messages will appear here -->
+      </div>
+
+      <!-- Input & Send -->
+      <form
+        id="chat-form"
+        class="flex items-center border-t border-gray-700 bg-gray-800 p-3"
+      >
+        <input
+          id="message-input"
+          type="text"
+          placeholder="Type your message..."
+          class="flex-1 bg-gray-700 text-white rounded-xl px-4 py-2 outline-none placeholder-gray-400"
+          required
+        />
+        <button
+          type="submit"
+          title="Send"
+          class="ml-3 bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-full transition flex items-center justify-center"
+        >
+          <i class="bi bi-send-fill text-xl"></i>
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

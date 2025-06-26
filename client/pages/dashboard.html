@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CallConnect - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/favicon_io/favicon.ico" type="image/x-icon">
+
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <!-- Navbar -->
+    <nav class="bg-indigo-600 text-white p-4 shadow">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold"><a href="/">CallConnect</a></h1>
+
+        <!-- Profile Icon + Username Dropdown -->
+        <div class="relative">
+          <button
+            id="profileToggle"
+            class="flex items-center gap-2 focus:outline-none"
+          >
+            <i class="bi bi-person-circle text-2xl"></i>
+            <span
+              id="usernameDisplay"
+              class="hidden sm:inline font-medium"
+            ></span>
+            <i class="bi bi-caret-down-fill text-xs"></i>
+          </button>
+
+          <!-- Dropdown with Logout -->
+          <div
+            id="profileDropdown"
+            class="hidden absolute right-0 mt-2 min-w-44 bg-gray-100 text-gray-800 rounded shadow z-50"
+          >
+            <span id="username" class="block w-full text-left px-4 py-2">
+              Abhinaba Jash(You)
+            </span>
+            <button
+              id="logoutBtn"
+              class="block w-full text-left px-4 py-2 hover:bg-gray-200 hover:rounded"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Notification popup container -->
+    <div
+      id="notification-popup"
+      class="fixed bottom-5 right-5 hidden bg-gray-900 text-white rounded-lg shadow-xl p-4 max-w-xs z-50"
+    >
+      <div id="notification-text" class="mb-3 text-sm"></div>
+      <div class="flex justify-end gap-2">
+        <button
+          id="accept-btn"
+          class="bg-green-600 px-3 py-1 rounded hover:bg-green-500 text-sm"
+        >
+          Accept
+        </button>
+        <button
+          id="dismiss-btn"
+          class="bg-red-600 px-3 py-1 rounded hover:bg-red-500 text-sm"
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div
+      class="container mt-8 mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-6"
+    >
+      <!-- Online Users -->
+      <div class="bg-white p-4 shadow rounded mb-5 h-fit">
+        <h2 class="text-xl font-bold mb-3">Online Users</h2>
+        <ul id="userList" class="list-group"></ul>
+      </div>
+
+      <!-- Call History -->
+      <div class="bg-white p-4 shadow rounded">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold mb-3">Call History</h2>
+          <i
+            id="delete-callhistory-btn"
+            title="Delete Call History"
+            class="bi bi-trash-fill text-danger fs-5 mb-3 hover:cursor-pointer"
+          ></i>
+        </div>
+        <ul id="callHistoryList" class="list-group"></ul>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../js/dashboard.js"></script>
+
+    <script>
+      // Toggle profile dropdown
+      const profileToggle = document.getElementById("profileToggle");
+      const profileDropdown = document.getElementById("profileDropdown");
+      const delCallHis = document.getElementById("delete-callhistory-btn");
+      const currentUserId = localStorage.getItem("userId");
+      delCallHis.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const confirmDelete = confirm(
+          "Are you sure you want to delete all call history?"
+        );
+        if (!confirmDelete) return;
+
+        try {
+          const response = await fetch("/api/dashboard/clear", {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("userAuthId")}`,
+            },
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("Call history cleared successfully.");
+            window.location.reload();
+          } else {
+            alert(result.message || "Failed to delete call history.");
+          }
+        } catch (err) {
+          console.error("Error deleting call history:", err);
+          alert("An error occurred while deleting.");
+        }
+      });
+      profileToggle.addEventListener("click", () => {
+        profileDropdown.classList.toggle("hidden");
+      });
+
+      // Optional: Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !profileToggle.contains(e.target) &&
+          !profileDropdown.contains(e.target)
+        ) {
+          profileDropdown.classList.add("hidden");
+        }
+      });
+
+      // Set username (from localStorage or fetched data)
+      const usernameDisplay = document.getElementById("usernameDisplay");
+      const storedUsername = localStorage.getItem("username");
+      if (storedUsername) {
+        usernameDisplay.textContent = storedUsername;
+      }
+    </script>
+  </body>
+</html>
